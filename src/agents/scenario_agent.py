@@ -4,7 +4,10 @@ import random
 from langchain_ollama.chat_models import ChatOllama  # 导入 ChatOllama 模型
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder  # 导入提示模板相关类
 from langchain_core.messages import HumanMessage, AIMessage  # 导入人类消息类和AI消息类
-from langchain_core.runnables.history import RunnableWithMessageHistory  # 导入带有消息历史的可运行类
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_openai import ChatOpenAI
+
+from agents.llm import ChatModelManager  # 导入带有消息历史的可运行类
 
 from .session_history import get_session_history  # 导入会话历史相关方法
 from utils.logger import LOG
@@ -16,6 +19,7 @@ class ScenarioAgent:
         self.intro_file = f"content/intro/{self.name}.json"
         self.prompt = self.load_prompt()
         self.intro_messages = self.load_intro()
+        self.llm = ChatModelManager().llm
 
         self.create_chatbot()
 
@@ -36,7 +40,6 @@ class ScenarioAgent:
         except json.JSONDecodeError:
             raise ValueError(f"Intro file {self.intro_file} contains invalid JSON!")
 
-
     def create_chatbot(self):
             # 创建聊天提示模板，包括系统提示和消息占位符
             system_prompt = ChatPromptTemplate.from_messages([
@@ -45,11 +48,7 @@ class ScenarioAgent:
             ])
 
             # 初始化 ChatOllama 模型，配置模型参数
-            self.chatbot = system_prompt | ChatOllama(
-                model="llama3.1:8b-instruct-q8_0",  # 使用的模型名称
-                max_tokens=8192,  # 最大生成的token数
-                temperature=0.8,  # 生成文本的随机性
-            )
+            self.chatbot = system_prompt | self.llm 
 
             # 将聊天机器人与消息历史记录关联起来
             self.chatbot_with_history = RunnableWithMessageHistory(self.chatbot, get_session_history)
