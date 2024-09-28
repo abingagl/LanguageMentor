@@ -11,7 +11,7 @@ agents = {
     "job_interview": ScenarioAgent("job_interview"),  # 求职面试场景代理
     "hotel_checkin": ScenarioAgent("hotel_checkin"),  # 酒店入住场景代理
     # "salary_negotiation": ScenarioAgent("salary_negotiation"),  # 薪资谈判场景代理（注释掉）
-    # "renting": ScenarioAgent("renting")  # 租房场景代理（注释掉）
+    "renting": ScenarioAgent("renting")  # 租房场景代理（注释掉）
 }
 
 # 处理用户对话的函数
@@ -43,7 +43,7 @@ with gr.Blocks(title="LanguageMentor 英语私教") as language_mentor_app:
                 ("求职面试", "job_interview"),  # 求职面试选项
                 ("酒店入住", "hotel_checkin"),  # 酒店入住选项
                 # ("薪资谈判", "salary_negotiation"),  # 薪资谈判选项（注释掉）
-                # ("租房", "renting")  # 租房选项（注释掉）
+                ("租房", "renting")  # 租房选项（注释掉）
             ], 
             label="场景"  # 单选框标签
         )
